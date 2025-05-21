@@ -2,13 +2,9 @@ from flask import current_app
 from datetime import datetime
 
 
-def create_user(email, password):
-    user_data = {
-        "email": email,
-        "password": password 
-    }
-    current_app.db["users"].insert_one(user_data)
-    return user_data
+def view_note(email):
+    notes = list(current_app.db["notes"].find({"email":email},{"_id":0}))
+    return notes
 
 def create_note(email, notes, tags, create_date=None):
     note_data = {

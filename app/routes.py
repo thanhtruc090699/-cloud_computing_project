@@ -1,25 +1,24 @@
 from flask import request, jsonify
-from app.models.user_model import create_user
+from app.models.user_model import view_note
 from app.models.user_model import create_note
 
 from app import app
 
-@app.route("/register", methods=["POST"])
-def register():
+@app.route("/view", methods=["POST"])
+def view_note_route():
     data = request.get_json()
     email = data.get("email")
-    password = data.get("password")
 
-    if not email or not password:
-        return jsonify({"error": "Email and password required"}), 400
+    if not email:
+        return jsonify({"error": "Email required"}), 400
 
-    user = create_user(email, password)
+    notes = view_note(email)
     return jsonify({
-        "message": "User created",
+        "message": "Here your note",
         "user": {
-            "email": user.get("email")
+            "note" : notes
         }
-    }), 201
+    }), 200
 
 @app.route("/create_note",methods=["POST"])
 def create_note_route():
