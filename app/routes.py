@@ -1,6 +1,8 @@
 from flask import request, jsonify
 from app.models.user_model import view_note
 from app.models.user_model import create_note
+from app.models.user_model import find_note_by_tags
+
 
 from app import app
 
@@ -8,8 +10,21 @@ from app import app
 def view_note_route():
     data = request.get_json()
     email = data.get("email")
-    
+
     notes = view_note(email)
+    return jsonify({
+        "message": "Here your note",
+        "user": {
+            "note" : notes
+        }
+    }), 200
+
+@app.route("/search", methods=["POST"])
+def find_note_by_tag_route():
+    data = request.get_json()
+    tag = data.get("tag")
+    
+    notes = find_note_by_tags(tag)
     return jsonify({
         "message": "Here your note",
         "user": {
@@ -23,9 +38,9 @@ def create_note_route():
 
     email = data.get("email")
     notes = data.get("notes")
-    tags = data.get("tags")
+    tags = data.get("tag")
     create_date = data.get("create_date")
-    note = create_note(email, notes, tags, create_date=None)
+    note = create_note(email, notes, tags)
     return jsonify({
         "message": "Note is successfully created",
         "Note": {
