@@ -8,10 +8,7 @@ from app import app
 def view_note_route():
     data = request.get_json()
     email = data.get("email")
-
-    if not email:
-        return jsonify({"error": "Email required"}), 400
-
+    
     notes = view_note(email)
     return jsonify({
         "message": "Here your note",
