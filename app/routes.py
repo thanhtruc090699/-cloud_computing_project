@@ -40,6 +40,12 @@ def create_note_route():
     notes = data.get("notes")
     tags = data.get("tag")
     create_date = data.get("create_date")
+
+    if not email or not notes: 
+        return jsonify({
+            "message": "email and notes are required"
+        }), 400
+    
     note = create_note(email, notes, tags)
     return jsonify({
         "message": "Note is successfully created",
