@@ -17,5 +17,5 @@ def create_note(email, notes, tags):
     return note_data
 
 def find_note_by_tags(tags):
-    notes = list(current_app.db["notes"].find({"tag":tags},{"_id":0}))
+    notes = list(current_app.db["notes"].find({"tag":{"$in":tags}},{"_id":0}))
     return notes
