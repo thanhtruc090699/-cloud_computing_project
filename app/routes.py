@@ -13,10 +13,9 @@ def view_note_route():
 
     notes = view_note(email)
     return jsonify({
-        "message": "Here your note",
-        "user": {
-            "note" : notes
-        }
+
+        "note" : notes
+
     }), 200
 
 @app.route("/search", methods=["POST"])
@@ -26,10 +25,9 @@ def find_note_by_tag_route():
     
     notes = find_note_by_tags(tag)
     return jsonify({
-        "message": "Here your note",
-        "user": {
+        
             "note" : notes
-        }
+        
     }), 200
 
 @app.route("/create_note",methods=["POST"])
