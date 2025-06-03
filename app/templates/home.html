@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public-Notes-Platform</title>
+</head>
+<body>
+    <form action="/view" method="POST">
+        <input type="text" name="email" placeholder="Email">
+        <button type="submit">view notes</button>
+    </form>
+    {% if notes %}
+        <h3>Note by {{email}}</h3>
+        <ul>
+            {% for note in notes %}
+            <li>{{note.notes}}</li><br>
+            {% endfor %}
+        </ul>
+       
+    {% elif message %}
+        <p>{{message}}</p>
+    {% endif %}
+</body>
+</html>

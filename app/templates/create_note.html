@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public-Notes-Platform</title>
+</head>
+<body>
+    <form action="/create_note" method="POST">
+        <input type="text" name="notes" placeholder="Make your note here"><br>
+        <input type="text" name="email" placeholder="Email"><br>
+        <input type="text" name="tag" placeholder="Tags"><br>
+        <button>Add New Note</button>
+    </form>
+    {% if note %}
+        <h3>Note by {{ note.email}} </h3>
+        <p><strong>Note: </strong>{{ note.notes }}</p>
+        <p><strong>Tags: </strong>{{ note.tag }}</p>
+        <p><strong>Created: </strong>{{ note.created_date }}</p>
+    {% elif message %}
+        <p>"{{ message }}"</p>
+    {% endif %}
+</body>
+</html>

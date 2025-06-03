@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Public-Notes-Platform</title>
+ 
+</head>
+<body>
+    <form action="/search" method="post">
+        <input type="text" name="tag" placeholder="Your Email or Tags"><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if notes %}
+        <h3>Result: </h3>
+        <ul>
+            {%for note in notes %}
+                <li>
+                    <strong>Note: </strong> {{ note.notes}}<br>
+                </li><br>
+            {% endfor %}
+        </ul>
+    {% elif searched %}
+        <p>No results found for "{{ searched }}"</p>
+    {% endif %}
+</body>
+</html>

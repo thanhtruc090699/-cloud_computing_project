@@ -2,57 +2,50 @@ from flask import request, jsonify
 from app.models.user_model import view_note
 from app.models.user_model import create_note
 from app.models.user_model import find_note_by_tags
+from datetime import datetime
+from flask import render_template
+
+
 
 
 from app import app
+@app.route("/", methods=["GET"])
+def home():
+    return render_template("search.html")
 
 @app.route("/view", methods=["POST"])
 def view_note_route():
-    data = request.get_json()
-    email = data.get("email")
+    email = request.form.get("email")
 
+    if not email: 
+        return render_template("home.html", message="email is required.")
     notes = view_note(email)
-    return jsonify({
-
-        "note" : notes
-
-    }), 200
+    return render_template("home.html", notes=notes, email=email)
 
 @app.route("/search", methods=["POST"])
 def find_note_by_tag_route():
-    data = request.get_json()
-    tag = data.get("tag")
+    tag = request.form.get("tag")
     
     notes = find_note_by_tags(tag)
-    return jsonify({
-        
-            "note" : notes
-        
-    }), 200
+    return render_template("search.html",notes=notes, searched=tag)
+
 
 @app.route("/create_note",methods=["POST"])
 def create_note_route():
-    data = request.get_json()
 
-    email = data.get("email")
-    notes = data.get("notes")
-    tags = data.get("tag")
-    create_date = data.get("create_date")
+    email = request.form.get("email")
+    notes = request.form.get("notes")
+    tags = request.form.get("tag")
+    create_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    print("FORM DATA:", email, notes, tags)
 
     if not email or not notes: 
-        return jsonify({
-            "message": "email and notes are required"
-        }), 400
+        return render_template("create_note.html", message="Email and note are required.")
     
     note = create_note(email, notes, tags)
-    return jsonify({
-        "message": "Note is successfully created",
-        "Note": {
-            "email": note.get("email"),
-            "note": note.get("notes"),
-            "tags": note.get("tag"),
-            "created_date": note.get("created_date")
+    return render_template("create_note.html", note=note)
 
-        }
-    }), 201
+
+
 
