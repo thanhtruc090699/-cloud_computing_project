@@ -11,16 +11,21 @@ from flask import render_template
 from app import app
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("search.html")
+    return render_template("home.html")
 
 @app.route("/view", methods=["POST"])
 def view_note_route():
-    email = request.form.get("email")
+    query = request.form.get("query")
 
-    if not email: 
-        return render_template("home.html", message="email is required.")
-    notes = view_note(email)
-    return render_template("home.html", notes=notes, email=email)
+    if not query: 
+        return render_template("home.html", message="email or tag is required.")
+    if "@" in query and "." in query:
+        notes = view_note(query)
+        return render_template("home.html", notes=notes, email=query)
+
+    else:
+        notes = find_note_by_tags(query)
+        return render_template("home.html",notes=notes)
 
 @app.route("/search", methods=["POST"])
 def find_note_by_tag_route():
