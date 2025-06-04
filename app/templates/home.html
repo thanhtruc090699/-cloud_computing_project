@@ -17,10 +17,10 @@
         </div>
         <form action="/view" method="POST">
             <input type="text" name="query" placeholder="Email or Tags" class="home-input">
-            <button  class="view-btn" type="submit">view notes</button>
+            <button  class="view-btn" type="submit">View Notes</button>
         </form>
         {% if notes %}
-            <h5 class="mt-4"><strong>Note by</strong> {{email}}</h5>
+            <h5 class="mt-4"><strong>Notes by</strong> {{email}}</h5>
             <div class="note-grid mt-3">
                 {% for note in notes %}
                 <div class="note-card">
@@ -33,10 +33,10 @@
         {% elif message %}
             <p class="text-danger">{{message}}</p>
         {% endif %}
-        <button class="add-btn">
+        <a href="{{ url_for('create_note_page')}}" class="add-btn">
             <img src="{{ url_for('static', filename='img/plus.png') }}" alt="Logo">
             Add New Notes
-        </button>
+        </a>
     </div>
    
    

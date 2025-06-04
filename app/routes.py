@@ -13,6 +13,11 @@ from app import app
 def home():
     return render_template("home.html")
 
+@app.route("/create", methods=["GET"])
+def create_note_page():
+    return render_template("create_note.html")
+
+
 @app.route("/view", methods=["POST"])
 def view_note_route():
     query = request.form.get("query")
