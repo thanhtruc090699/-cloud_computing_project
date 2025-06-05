@@ -7,6 +7,11 @@ def view_note(email):
     return notes
 
 def create_note(email, notes, tags):
+
+    if isinstance(tags, str):
+        tags = [t.strip() for t in tags.split("#")] 
+    elif tags is None:
+        tags = []
     note_data = {
         "notes": notes,
         "email": email,
@@ -18,7 +23,7 @@ def create_note(email, notes, tags):
 
 def find_note_by_tags(tags):
     if isinstance(tags, str):
-        tags = [t.strip() for t in tags.split(",")] 
+        tags = [t.strip() for t in tags.split("#") if t.strip()] 
     elif tags is None:
         tags = []
     notes = list(current_app.db["notes"].find({"tag":{"$in":tags}},{"_id":0}))

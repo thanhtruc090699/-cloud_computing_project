@@ -36,6 +36,10 @@
     text-overflow: ellipsis;
     border: none;
 }
+.text-input::placeholder{
+    text-align: left;
+    vertical-align: top;
+}
 
 .create-note-container .email-input{
     background-color: rgba(252, 230, 240, 0.4); 
