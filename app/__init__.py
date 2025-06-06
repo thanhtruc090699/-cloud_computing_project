@@ -10,4 +10,4 @@ client = MongoClient(mongo_uri)
 app.db = client["public_notes"]
 
 # Import routes
-from app import routes
+from . import routes

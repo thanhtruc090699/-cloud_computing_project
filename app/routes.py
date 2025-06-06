@@ -29,7 +29,7 @@ def view_note_route():
         return render_template("home.html", notes=notes, email=query)
 
     else:
-        notes = find_note_by_tags(query)
+        notes = find_note_by_tags(query) 
         return render_template("home.html",notes=notes)
 
 @app.route("/search", methods=["POST"])
