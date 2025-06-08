@@ -11,6 +11,10 @@
 <body>
     <div class="create-note-container">
         <div class="create-note-header">
+            <a href="{{ url_for('home')}}" class="back-btn">
+                <img src="{{ url_for('static', filename='img/back.png') }}" alt="back-btn">
+                 Back
+            </a>
             <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="Logo">
         </div>
         <form action="/create_note" method="POST">

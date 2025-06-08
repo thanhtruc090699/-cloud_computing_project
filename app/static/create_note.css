@@ -15,6 +15,25 @@
     width: 199px;
     height: 33px;
 }
+.create-note-container .back-btn {
+    width: 5px;
+    height: 5px;
+    color: #7B4EFF;
+    position: fixed;
+    top: 30px;
+    left: 50px;
+    transform: translateX(-50%);
+    border: none;
+    font-size: 24px;
+    z-index: 999;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-weight: 500;
+}
+
 .create-note-container form{
     display: flex;
     flex-direction: column;
