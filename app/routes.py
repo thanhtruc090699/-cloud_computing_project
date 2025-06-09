@@ -17,9 +17,6 @@ def home():
 def create_note_page():
     return render_template("create_note.html")
 
-@app.route("/back", methods=["GET"])
-def go_back_page():
-    return render_template("home.html")
 
 
 @app.route("/view", methods=["POST"])

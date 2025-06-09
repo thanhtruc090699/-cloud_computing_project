@@ -28,8 +28,11 @@
                 </div>
                 {% endfor %}
             </div>
-            
-       
+        {% elif notes is defined %}
+            <div class="text-center">
+            <img src="{{ url_for('static', filename='img/Diary.png') }}" alt="diary">
+            No Notes Found.
+            </div>
         {% elif message %}
             <p class="text-danger">{{message}}</p>
         {% endif %}

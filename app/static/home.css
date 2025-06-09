@@ -57,14 +57,23 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
-.home-container {
-    font-weight: 500;
-    line-height: 1.4;
-    max-height: 5.6em;
-    overflow: hiiden;
-    text-overflow: ellipsis;
+.home-container .text-center{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    gap: 20px;
+    font-weight: 900;
+    color: #333;
 }
+
+.home-container .text-center .img{
+    width: 180px;
+    height: 180px;
+}
+
+    
 .home-container .add-btn{
     position: fixed;
     bottom: 50px;

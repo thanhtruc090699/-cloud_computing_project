@@ -109,3 +109,15 @@
     justify-content: center;
     text-decoration: none;
 }
+.create-note-container .note-card{
+    background-color: rgba(252, 230, 240, 0.4); 
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    min-height: 100px;
+    font-size: 14px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
