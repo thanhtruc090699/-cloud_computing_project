@@ -1,27 +1,55 @@
 version: "3.8"
 
 services:
+
+  haproxy:
+    build:
+      context: ./haproxy
+    container_name: haproxy
+    ports:
+      - "80:80"
+    networks:
+      - frontend-net
   mongo:
     build:
       context: ./mongo
     container_name: mongo
     restart: always
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
     volumes:
       - ./mongo-data:/data/db
+    networks:
+      - backend-net
 
-  app:
+  app1:
     build:
       context: .
       dockerfile: app/Dockerfile
-    container_name: public-notes-app
-    ports:
-      - "80:80"
+    container_name: public-notes-app-1
     depends_on:
       - mongo
     environment:
       - MONGO_URI=mongodb://mongo:27017/
+    networks:
+      - frontend-net
+      - backend-net
+  
+  app2:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    container_name: public-notes-app-2
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/
+    depends_on:
+      - mongo
+    networks:
+      - frontend-net
+      - backend-net
 
 volumes:
   mongo-data:
+networks:
+  frontend-net:
+  backend-net:
