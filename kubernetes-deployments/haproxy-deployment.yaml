@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haproxy-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: haproxy
+  template:
+    metadata:
+      labels:
+        app: haproxy
+    spec:
+      initContainers:
+        - name: wait-app1
+          image: busybox
+          command: ['sh', '-c', 'until nslookup public-notes-app-1; do echo waiting for app1; sleep 2; done']
+        - name: wait-app2
+          image: busybox
+          command: ['sh', '-c', 'until nslookup public-notes-app-2; do echo waiting for app2; sleep 2; done']
+      containers:
+        - name: haproxy
+          image: ttruc09/public-notes-haproxy:latest
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: haproxy-service
+spec:
+  selector:
+    app: haproxy
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30080
+  type: NodePort
