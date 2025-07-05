@@ -1,7 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: haproxy-config
+data:
+  haproxy.cfg: |
+    global
+    maxconn 256
+    log stdout format raw local0
+
+    defaults
+    mode http
+    timeout connect 5000ms
+    timeout client  50000ms
+    timeout server  50000ms
+
+    frontend http-in
+    bind *:80
+    default_backend flask_backends
+
+    backend flask_backends
+    balance roundrobin
+    server app1 public-notes-app-1:80 check
+    server app2 public-notes-app-2:80 check
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: haproxy-deployment
+  labels:
+    app: haproxy
 spec:
   replicas: 1
   selector:
@@ -12,18 +40,20 @@ spec:
       labels:
         app: haproxy
     spec:
-      initContainers:
-        - name: wait-app1
-          image: busybox
-          command: ['sh', '-c', 'until nslookup public-notes-app-1; do echo waiting for app1; sleep 2; done']
-        - name: wait-app2
-          image: busybox
-          command: ['sh', '-c', 'until nslookup public-notes-app-2; do echo waiting for app2; sleep 2; done']
       containers:
         - name: haproxy
           image: ttruc09/public-notes-haproxy:latest
+          imagePullPolicy: Never
           ports:
-            - containerPort: 80
+            - containerPort: 8080
+          volumeMounts:
+            - name: haproxy-config-volume
+              mountPath: /usr/local/etc/haproxy/haproxy.cfg
+              subPath: haproxy.cfg
+      volumes:
+        - name: haproxy-config-volume
+          configMap:
+            name: haproxy-config
 
 ---
 apiVersion: v1
