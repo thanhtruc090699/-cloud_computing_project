@@ -16,12 +16,11 @@ data:
 
     frontend http-in
     bind *:80
-    default_backend flask_backends
+    default_backend public_notes_backend
 
-    backend flask_backends
+    backend public_notes_backend
     balance roundrobin
-    server app1 public-notes-app-1:80 check
-    server app2 public-notes-app-2:80 check
+    server app-1 public-notes-app-service:80 check
 ---
 
 apiVersion: apps/v1
