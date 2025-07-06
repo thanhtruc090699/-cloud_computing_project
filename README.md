@@ -22,7 +22,7 @@ There are two core pages in the web app:
    - Submitting the form will store the note in MongoDB.
 
 ---
-## 📱 UI/UX Note
+## UI/UX Note
 
 The web interface is **intentionally designed as a mobile web application**, optimized for smartphone screens.
 
@@ -73,14 +73,16 @@ eval $(minikube docker-env)
 
 3. Build Docker images:
 
+Ensure Docker is running and build all images:
+
 ```bash
-# Build and load Mongo
+# Build Mongo
 docker build -t ttruc09/public-notes-mongo:latest -f mongo/Dockerfile .
 
-# Build and load Flask Web App
+# Build Flask Web App
 docker build -t ttruc09/public-notes-app1:latest -f app/Dockerfile .
 
-# Build and load HAProxy
+# Build HAProxy
 docker build -t ttruc09/public-notes-haproxy:latest -f haproxy/Dockerfile .
 ```
 4. Load Docker Images into Minikube:
