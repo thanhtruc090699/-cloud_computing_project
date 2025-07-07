@@ -168,9 +168,68 @@ http://ttrinh.notes.com
 
 ---
 
+## Troubleshooting
 
+### Issue: Cannot access the web application using Minikube IP (e.g. `http://192.168.49.2`)
+
+This may occur when running with **Ingress** due to local DNS resolution or routing conflicts on your machine.
+
+### Solution:
+
+If `http://<MINIKUBE_IP>` does **not** load the application, try the following:
+
+1. **Use `localhost` instead:**
+
+   You can directly access the app via:
+   ```
+   http://127.0.0.1
+   ```
+
+2. **Edit your `/etc/hosts` file (Linux/macOS) or `C:\Windows\System32\drivers\etc\hosts` (Windows):**
+
+   Add the following line (replace IP if needed):
+
+   ```
+   127.0.0.1   ttrinh.notes.com
+   ```
+
+   Then, simply open:
+
+   ```
+   http://ttrinh.notes.com
+   ```
+
+3. **Make sure the tunnel is running:**
+
+   ```
+   minikube tunnel
+   ```
+
+   This is required when you're using **Ingress with Minikube**, as it routes external traffic into the cluster.
+
+4. **Double-check Ingress Controller Port:**
+
+   Run:
+
+   ```bash
+   kubectl get svc -n ingress-nginx
+   ```
+
+   Confirm that port `80` is mapped to a valid `NodePort` or handled correctly via the tunnel.
 
 ---
+
+Still facing issues? Restart Ingress and reapply the manifests:
+
+```bash
+minikube addons disable ingress
+minikube addons enable ingress
+kubectl delete -f kubernetes-deployments/
+kubectl apply -f kubernetes-deployments/
+```
+
+---
+
 
 ## Clean Up
 
