@@ -33,13 +33,6 @@ def view_note_route():
         notes = find_note_by_tags(query) 
         return render_template("home.html",notes=notes)
 
-@app.route("/search", methods=["POST"])
-def find_note_by_tag_route():
-    tag = request.form.get("tag")
-    
-    notes = find_note_by_tags(tag)
-    return render_template("search.html",notes=notes, searched=tag)
-
 
 @app.route("/create_note",methods=["POST"])
 def create_note_route():
