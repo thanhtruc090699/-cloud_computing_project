@@ -53,7 +53,7 @@ docker compose up --build -d
 ```
 
 - Containers for web app and MongoDB will be built and deployed.
-- The app will be available at: [http://127.0.0.1:8080](http://127.0.0.1:8080)
+- The app will be available at: [http://127.0.0.1](http://127.0.0.1) or [http://loacalhost](http://localhost)
 
 ---
 
