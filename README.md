@@ -77,13 +77,13 @@ Ensure Docker is running and build all images:
 
 ```bash
 # Build Mongo
-docker build -t ttruc09/public-notes-mongo:latest -f mongo/Dockerfile .
+docker build -t ttruc09/public-notes-mongo:latest -f mongo/Dockerfile ./mongo
 
 # Build Flask Web App
 docker build -t ttruc09/public-notes-app1:latest -f app/Dockerfile .
 
 # Build HAProxy
-docker build -t ttruc09/public-notes-haproxy:latest -f haproxy/Dockerfile .
+docker build -t ttruc09/public-notes-haproxy:latest -f haproxy/Dockerfile ./haproxy
 ```
 4. Load Docker Images into Minikube:
 
@@ -138,6 +138,11 @@ minikube addons enable ingress
 kubectl delete deployment haproxy-deployment
 kubectl delete service haproxy-service
 kubectl delete configmap haproxy-config
+```
+3. Get <MINIKUBE_IP>
+
+```bash
+Minikube ip
 ```
 
 3. Add host entry:
@@ -216,6 +221,66 @@ If `http://<MINIKUBE_IP>` does **not** load the application, try the following:
    ```
 
    Confirm that port `80` is mapped to a valid `NodePort` or handled correctly via the tunnel.
+
+---
+#### Issue: ExitCode 14 / Restarting loop
+
+**Cause:** MongoDB cannot write to the mounted data folder (`/data/db`).
+
+---
+
+### If using bind mount (host folder) — platform-specific instructions:
+
+#### Windows
+
+1. Ensure the folder exists:
+    ```powershell
+    mkdir C:\Users\<your-user>\public-notes-platform\mongo-data
+    ```
+
+2. Share the folder with Docker:
+    - Open **Docker Desktop** → **Settings** → **Resources** → **File Sharing**
+    - Add:
+      ```
+      C:\Users\<your-user>\public-notes-platform\mongo-data
+      ```
+    - Click **Apply & Restart**
+
+---
+
+#### macOS or Linux
+
+1. Ensure the folder exists:
+    ```bash
+    mkdir -p ~/public-notes-platform/mongo-data
+    ```
+
+2. Set proper permissions (MongoDB must have write access):
+    ```bash
+    chmod -R 777 ~/public-notes-platform/mongo-data
+    ```
+
+    > **Note:** Using `777` is suitable for local dev only. In production, use stricter permissions and user mapping.
+
+---
+
+### Alternative Fix: Use Docker **named volume**
+
+Instead of bind mount, configure a named volume. In `docker-compose.yml`, replace:
+
+```yaml
+volumes:
+  - ./mongo-data:/data/db
+
+**With**
+
+```yaml
+volumes:
+  - mongo-data:/data/db
+
+volumes:
+  mongo-data:
+
 
 ---
 
