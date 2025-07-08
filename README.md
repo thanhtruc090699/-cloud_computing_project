@@ -227,7 +227,6 @@ If `http://<MINIKUBE_IP>` does **not** load the application, try the following:
 
 **Cause:** MongoDB cannot write to the mounted data folder (`/data/db`).
 
----
 
 ### If using bind mount (host folder) — platform-specific instructions:
 
@@ -246,7 +245,7 @@ If `http://<MINIKUBE_IP>` does **not** load the application, try the following:
       ```
     - Click **Apply & Restart**
 
----
+
 
 #### macOS or Linux
 
@@ -262,7 +261,7 @@ If `http://<MINIKUBE_IP>` does **not** load the application, try the following:
 
     > **Note:** Using `777` is suitable for local dev only. In production, use stricter permissions and user mapping.
 
----
+
 
 ### Alternative Fix: Use Docker **named volume**
 
@@ -271,6 +270,7 @@ Instead of bind mount, configure a named volume. In `docker-compose.yml`, replac
 ```yaml
 volumes:
   - ./mongo-data:/data/db
+```
 
 **With**
 
@@ -280,7 +280,7 @@ volumes:
 
 volumes:
   mongo-data:
-
+```
 
 ---
 
