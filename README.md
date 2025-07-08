@@ -142,10 +142,10 @@ kubectl delete configmap haproxy-config
 3. Get <MINIKUBE_IP>
 
 ```bash
-Minikube ip
+minikube ip
 ```
 
-3. Add host entry:
+4. Add host entry:
 
 Edit your `/etc/hosts` file and add this line (replace IP accordingly):
 
@@ -153,19 +153,19 @@ Edit your `/etc/hosts` file and add this line (replace IP accordingly):
 <MINIKUBE_IP>    ttrinh.notes.com
 ```
 
-4. Apply Ingress resource:
+5. Apply Ingress resource:
 
 ```bash
 kubectl apply -f kubernetes-deployments/ingress.yaml
 ```
 
-5. Start tunnel:
+6. Start tunnel:
 
 ```bash
 minikube tunnel
 ```
 
-6. Visit in browser:
+7. Visit in browser:
 
 ```
 http://ttrinh.notes.com
@@ -223,10 +223,11 @@ If `http://<MINIKUBE_IP>` does **not** load the application, try the following:
    Confirm that port `80` is mapped to a valid `NodePort` or handled correctly via the tunnel.
 
 ---
-#### Issue: ExitCode 14 / Restarting loop
+### Issue: ExitCode 14 / Restarting loop
 
 **Cause:** MongoDB cannot write to the mounted data folder (`/data/db`).
 
+### Solution
 
 ### If using bind mount (host folder) — platform-specific instructions:
 
