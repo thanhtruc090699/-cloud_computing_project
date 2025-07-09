@@ -26,7 +26,7 @@ services:
     build:
       context: .
       dockerfile: app/Dockerfile
-    container_name: public-notes-app-1
+    container_name: app1
     depends_on:
       - mongo
     environment:
@@ -39,7 +39,7 @@ services:
     build:
       context: .
       dockerfile: app/Dockerfile
-    container_name: public-notes-app-2
+    container_name: app2
     environment:
       - MONGO_URI=mongodb://mongo:27017/
     depends_on:
