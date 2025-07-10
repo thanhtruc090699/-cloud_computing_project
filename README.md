@@ -65,13 +65,7 @@ docker compose up --build -d
 minikube start --driver=docker 
 ```
 
-2. Use Minikube’s Docker daemon:
-
-```bash
-eval $(minikube docker-env)
-```
-
-3. Build Docker images:
+2. Build Docker images:
 
 Ensure Docker is running and build all images:
 
@@ -85,7 +79,7 @@ docker build -t ttruc09/public-notes-app1:latest -f app/Dockerfile .
 # Build HAProxy
 docker build -t ttruc09/public-notes-haproxy:latest -f haproxy/Dockerfile ./haproxy
 ```
-4. Load Docker Images into Minikube:
+3. Load Docker Images into Minikube:
 
 if using Minikube with Docker driver
 
@@ -102,7 +96,7 @@ minikube image load ttruc09/public-notes-app1:latest
 minikube image load ttruc09/public-notes-haproxy:latest
 
 ```
-5. Deploy the app to Kubernetes:
+4. Deploy the app to Kubernetes:
 
 ```bash
 kubectl apply -f kubernetes-deployments/
@@ -116,7 +110,7 @@ kubectl get svc
 kubectl get ingress
 ```
 
-6. Get access URL through HAProxy:
+5. Get access URL through HAProxy:
 
 ```bash
 minikube service haproxy-service --url
@@ -221,7 +215,7 @@ If `http://<MINIKUBE_IP>` does **not** load the application, try the following:
    ```
 
    Confirm that port `80` is mapped to a valid `NodePort` or handled correctly via the tunnel.
-   
+
 ---
 
 Still facing issues? Restart Ingress and reapply the manifests:
