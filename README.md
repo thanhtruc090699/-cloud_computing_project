@@ -221,7 +221,17 @@ If `http://<MINIKUBE_IP>` does **not** load the application, try the following:
    ```
 
    Confirm that port `80` is mapped to a valid `NodePort` or handled correctly via the tunnel.
+   
+---
 
+Still facing issues? Restart Ingress and reapply the manifests:
+
+```bash
+minikube addons disable ingress
+minikube addons enable ingress
+kubectl delete -f kubernetes-deployments/
+kubectl apply -f kubernetes-deployments/
+```
 ---
 ### Issue: ExitCode 14 / Restarting loop
 
@@ -366,16 +376,6 @@ docker compose build --no-cache
 docker compose up -d
 ```
 
----
-
-Still facing issues? Restart Ingress and reapply the manifests:
-
-```bash
-minikube addons disable ingress
-minikube addons enable ingress
-kubectl delete -f kubernetes-deployments/
-kubectl apply -f kubernetes-deployments/
-```
 
 ---
 
