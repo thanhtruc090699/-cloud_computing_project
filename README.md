@@ -297,39 +297,39 @@ However, on **Linux environments** (such as EC2), this resolution may fail. The 
 
 Please kindly change from:
 
-'''yaml
+```yaml
 backend flask_backends
     balance roundrobin
     server app1 app1:80 check
     server app2 app2:80 check
-'''
+```
 
 to:
 
-'''yaml
+```yaml
 backend flask_backends
     balance roundrobin
     server app1 app1:5000 check
     server app2 app2:5000 check
-'''
+```
 
 Update in the file run.py:
 
-'''yaml
+```yaml
 app.run(host="0.0.0.0", port=5000)
-'''
+```
 
 Rebuild Haproxy:
 
-'''yaml
+```yaml
 docker compose up -d --build haproxy
-'''
+```
 
 Verify Runnning Container 
 
-'''yaml
+```yaml
 docker ps
-'''
+```
 
 
 ---
