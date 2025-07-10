@@ -62,7 +62,7 @@ docker compose up --build -d
 1. Start Minikube:
 
 ```bash
-minikube start
+minikube start --driver=docker 
 ```
 
 2. Use Minikube’s Docker daemon:
@@ -282,6 +282,55 @@ volumes:
 volumes:
   mongo-data:
 ```
+
+## Issue: HAProxy Cannot Resolve Backend DNS on Linux (EC2)
+
+### Backend Resolution Fails on Linux (e.g., EC2)
+
+When running on **Docker Desktop** (Windows/macOS), HAProxy can resolve backend service names (e.g., `app1`, `app2`) via Docker internal DNS on default port `80`.
+
+However, on **Linux environments** (such as EC2), this resolution may fail. The HAProxy log will show errors like:
+
+**[ALERT]** : 'server flask_backends/app1' : could not resolve address 'app1'.
+
+### Solution:
+
+Please kindly change from:
+
+'''yaml
+backend flask_backends
+    balance roundrobin
+    server app1 app1:80 check
+    server app2 app2:80 check
+'''
+
+to:
+
+'''yaml
+backend flask_backends
+    balance roundrobin
+    server app1 app1:5000 check
+    server app2 app2:5000 check
+'''
+
+Update in the file run.py:
+
+'''yaml
+app.run(host="0.0.0.0", port=5000)
+'''
+
+Rebuild Haproxy:
+
+'''yaml
+docker compose up -d --build haproxy
+'''
+
+Verify Runnning Container 
+
+'''yaml
+docker ps
+'''
+
 
 ---
 
