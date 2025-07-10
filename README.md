@@ -331,6 +331,40 @@ Verify Runnning Container
 docker ps
 ```
 
+### Full Cleanup & Rebuild (When Things Go Wrong)
+
+If HAProxy or any other service still fails after applying the basic troubleshooting steps, it's best to **clean up the environment completely** and perform a **full rebuild without using Docker cache**.
+
+---
+
+### Common Symptoms
+- HAProxy still fails to resolve DNS
+- Containers are not reachable or crash at startup
+- Persistent volumes cause permission issues (especially on EC2/Linux)
+- MongoDB container fails to start due to inaccessible data directory
+
+---
+
+### Solution: Full Reset & Clean Build
+
+#### Stop All Containers, Remove Orphaned Volumes And Build Again Without Cache
+
+```bash
+# 1. Stop all containers and prune everything
+docker compose down -v --remove-orphans
+docker system prune -f --volumes
+
+# 2. Fix local volume permission issues (Linux/EC2)
+sudo rm -rf ~/public-notes-platform/mongo-data
+mkdir -p ~/public-notes-platform/mongo-data
+sudo chown -R ec2-user:ec2-user ~/public-notes-platform/mongo-data
+
+# 3. Rebuild images without cache
+docker compose build --no-cache
+
+# 4. Start containers
+docker compose up -d
+```
 
 ---
 
