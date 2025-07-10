@@ -20,7 +20,7 @@
         <form action="/create_note" method="POST">
             <textarea type="text" name="notes" placeholder="Make your note here" class="text-input"></textarea><br>
             <input type="text" name="email" placeholder="Email" class="email-input"><br>
-            <input type="text" name="tag" placeholder="Tags" class="tag-input"><br>
+            <input type="text" name="tag" placeholder="#Tags(e.g #random, #today,...)" class="tag-input"><br>
             <button type="submit" class="add-btn">
                 <img src="{{ url_for('static', filename='img/plus.png') }}" alt="Logo">
                 Add New Note

@@ -16,7 +16,7 @@
             <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
         </div>
         <form action="/view" method="POST">
-            <input type="text" name="query" placeholder="Email or Tags" class="home-input">
+            <input type="text" name="query" placeholder="Email or #Tags(e.g #random, #today,...)" class="home-input">
             <button  class="view-btn" type="submit">View Notes</button>
         </form>
         {% if notes %}

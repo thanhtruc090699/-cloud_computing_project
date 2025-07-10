@@ -10,14 +10,14 @@ This is a simple web-based note management application built for the **Cloud Com
 There are two core pages in the web app:
 
 1. **Home Page**  
-   - Users can search for notes using **email** or **tags**.
+   - Users can search for notes using **email** or **tags** (#random, #today,...).
    - Results (if any) are displayed below the input field.
 
 2. **Create Note Page**  
    - Accessed by clicking the **“Add New Notes”** button on the home page.
    - Allows users to enter:
      - The **email** of the note owner.
-     - The **tag(s)** used to categorize the note.
+     - The **tag(s)** (#random, #today,...) used to categorize the note.
      - The **note content** itself.
    - Submitting the form will store the note in MongoDB.
 
@@ -52,8 +52,8 @@ Make sure the following are properly installed and set up before running this pr
 docker compose up --build -d
 ```
 
-- Containers for web app and MongoDB will be built and deployed.
-- The app will be available at: [http://127.0.0.1](http://127.0.0.1) or [http://loacalhost](http://localhost)
+- Containers for web app, MongoDB and Haproxy will be built and deployed.
+- The app will be available at: [http://127.0.0.1](http://127.0.0.1) or [http://loacalhost:80](http://localhost:80) (Haproxy port)
 
 ---
 
@@ -256,15 +256,14 @@ kubectl apply -f kubernetes-deployments/
 
 1. Ensure the folder exists:
     ```bash
-    mkdir -p ~/public-notes-platform/mongo-data
+    sudo mkdir -p ~/public-notes-platform/mongo-data
     ```
 
 2. Set proper permissions (MongoDB must have write access):
     ```bash
-    chmod -R 777 ~/public-notes-platform/mongo-data
-    ```
+    sudo chown -R 999:999 ~/public-notes-platform/mongo-data
 
-    > **Note:** Using `777` is suitable for local dev only. In production, use stricter permissions and user mapping.
+    ```
 
 
 
