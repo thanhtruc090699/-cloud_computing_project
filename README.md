@@ -2,370 +2,146 @@
 
 ## Overview
 
-This is a simple web-based note management application built for the **Cloud Computing SS2025 Project**. It allows users to:
+A simple Flask + MongoDB web app to create and search notes by email or tags. Deployed with Docker Compose (HAProxy + 2 app replicas) or Kubernetes (Minikube) with HAProxy/Ingress.
 
-- **Search notes** by entering an email or a tag.
-- **Add new notes**, associating them with an email and one or more tags.
+Features:
+- Search notes by email or tags (#tag)
+- Create notes with email, tags, content
 
-There are two core pages in the web app:
-
-1. **Home Page**  
-   - Users can search for notes using **email** or **tags** (#random, #today,...).
-   - Results (if any) are displayed below the input field.
-
-2. **Create Note Page**  
-   - Accessed by clicking the **“Add New Notes”** button on the home page.
-   - Allows users to enter:
-     - The **email** of the note owner.
-     - The **tag(s)** (#random, #today,...) used to categorize the note.
-     - The **note content** itself.
-   - Submitting the form will store the note in MongoDB.
+Pages:
+- Home: search by email or tag, show results
+- Create Note: add new note (stored in MongoDB)
 
 ---
-## UI/UX Note
+## UI/UX
 
-The web interface is **intentionally designed as a mobile web application**, optimized for smartphone screens.
-
-To **best experience the interface**:
-
-1. Open the app in **Google Chrome**.
-2. Right-click anywhere → **Inspect**.
-3. Toggle device toolbar (or press `Ctrl+Shift+M`).
-4. Choose **“iPhone 14”** or similar from the device dropdown.
-5. Refresh the page to simulate the intended mobile layout.
+Mobile-first UI (optimized for small screens). For best preview in Chrome: DevTools → Toggle Device Toolbar → iPhone 14 (refresh).
 
 ---
 ## Prerequisites
 
-Make sure the following are properly installed and set up before running this project:
-
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
-- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Docker](https://docs.docker.com/get-docker/) + Docker Compose
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/) + [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
 ---
 
-## Running with Docker Compose
+## 1. Run with Docker Compose
 
 ```bash
 docker compose up --build -d
 ```
 
-- Containers for web app, MongoDB and Haproxy will be built and deployed.
-- The app will be available at: [http://127.0.0.1](http://127.0.0.1) or [http://loacalhost:80](http://localhost:80) (Haproxy port)
+App: http://127.0.0.1 (HAProxy on port 80)
+
+Stop: `docker compose down`
 
 ---
 
-## Running on Minikube with HAProxy
-
-1. Start Minikube:
+## 2. Run on Minikube (HAProxy)
 
 ```bash
-minikube start --driver=docker 
-```
-
-2. Build Docker images:
-
-Ensure Docker is running and build all images:
-
-```bash
-# Build Mongo
+minikube start --driver=docker
+# Build images
 docker build -t ttruc09/public-notes-mongo:latest -f mongo/Dockerfile ./mongo
-
-# Build Flask Web App
 docker build -t ttruc09/public-notes-app1:latest -f app/Dockerfile .
-
-# Build HAProxy
 docker build -t ttruc09/public-notes-haproxy:latest -f haproxy/Dockerfile ./haproxy
-```
-3. Load Docker Images into Minikube:
-
-if using Minikube with Docker driver
-
-```bash
-# Load Mongo
+# Load to minikube
 minikube image load ttruc09/public-notes-mongo:latest
-
-
-# Load Flask Web App
 minikube image load ttruc09/public-notes-app1:latest
-
-
-# Load HAProxy
 minikube image load ttruc09/public-notes-haproxy:latest
-
-```
-4. Deploy the app to Kubernetes:
-
-```bash
+# Deploy
 kubectl apply -f kubernetes-deployments/
-```
-
-Wait a few moments, then check everything is running:
-
-```bash
-kubectl get pods
-kubectl get svc
-kubectl get ingress
-```
-
-5. Get access URL through HAProxy:
-
-```bash
+# Get URL
 minikube service haproxy-service --url
 ```
 
 ---
 
-## Running on Minikube with Ingress
-
-1. Enable Ingress addon:
+## 3. Run on Minikube (Ingress)
 
 ```bash
 minikube addons enable ingress
-```
-
-2. Remove HAProxy resources if applied:
-
-```bash
-kubectl delete deployment haproxy-deployment
-kubectl delete service haproxy-service
-kubectl delete configmap haproxy-config
-```
-3. Get <MINIKUBE_IP>
-
-```bash
-minikube ip
-```
-
-4. Add host entry:
-
-Edit your `/etc/hosts` file and add this line (replace IP accordingly):
-
-```
-<MINIKUBE_IP>    ttrinh.notes.com
-```
-
-5. Apply Ingress resource:
-
-```bash
+# Remove HAProxy if deployed
+kubectl delete deployment haproxy-deployment 2>/dev/null; kubectl delete service haproxy-service 2>/dev/null; kubectl delete configmap haproxy-config 2>/dev/null
 kubectl apply -f kubernetes-deployments/ingress.yaml
+# Add hosts entry (Windows: C:\Windows\System32\drivers\etc\hosts)
+#   With minikube tunnel (Windows/macOS Docker driver):  127.0.0.1   ttrinh.notes.com
+#   Without tunnel (Linux, route works):                 <minikube-ip> ttrinh.notes.com
+minikube tunnel  # keep terminal open
 ```
-
-6. Start tunnel:
-
-```bash
-minikube tunnel
-```
-
-7. Visit in browser:
-
-```
-http://ttrinh.notes.com
-```
+Visit: http://ttrinh.notes.com  (HTTP only — no HTTPS)
 
 ---
 
 ## Troubleshooting
 
-### Issue: Cannot access the web application using Minikube IP (e.g. `http://192.168.49.2`)
+### Issue: `https://ttrinh.notes.com` / browser cannot open the site
 
-This may occur when running with **Ingress** due to local DNS resolution or routing conflicts on your machine.
+Two common causes:
+1. **Using `https://`** — the app serves **HTTP only** (port 80, no TLS). Always use `http://ttrinh.notes.com`.
+2. **Hosts file points to the Minikube IP** (e.g. `192.168.49.2`). On Windows/macOS with the **Docker driver** that IP is not routable from the host. Point it to `127.0.0.1` and run `minikube tunnel`.
 
-### Solution:
+Fix (Windows):
+```powershell
+# 1. Make sure the tunnel is running (in a separate terminal, keep it open)
+minikube tunnel
 
-If `http://<MINIKUBE_IP>` does **not** load the application, try the following:
+# 2. Edit hosts with admin rights: C:\Windows\System32\drivers\etc\hosts
+#    Use 127.0.0.1 (NOT the minikube ip) when using the tunnel:
+#    127.0.0.1 ttrinh.notes.com
 
-1. **Use `localhost` instead:**
+# 3. Flush DNS
+ipconfig /flushdns
+```
+Then open `http://ttrinh.notes.com` (http, not https).
 
-   You can directly access the app via:
-   ```
-   http://127.0.0.1
-   ```
-
-2. **Edit your `/etc/hosts` file (Linux/macOS) or `C:\Windows\System32\drivers\etc\hosts` (Windows):**
-
-   Add the following line (replace IP if needed):
-
-   ```
-   127.0.0.1   ttrinh.notes.com
-   ```
-
-   Then, simply open:
-
-   ```
-   http://ttrinh.notes.com
-   ```
-
-3. **Make sure the tunnel is running:**
-
-   ```
-   minikube tunnel
-   ```
-
-   This is required when you're using **Ingress with Minikube**, as it routes external traffic into the cluster.
-
-4. **Double-check Ingress Controller Port:**
-
-   Run:
-
-   ```bash
-   kubectl get svc -n ingress-nginx
-   ```
-
-   Confirm that port `80` is mapped to a valid `NodePort` or handled correctly via the tunnel.
-
----
-
-Still facing issues? Restart Ingress and reapply the manifests:
-
+Verify:
 ```bash
-minikube addons disable ingress
-minikube addons enable ingress
-kubectl delete -f kubernetes-deployments/
-kubectl apply -f kubernetes-deployments/
+kubectl get ingress                 # ADDRESS should be set
+kubectl get svc -n ingress-nginx    # controller port 80 mapped
 ```
+
+### Issue: Cannot access app via Minikube IP directly
+
+If `http://<MINIKUBE_IP>` does not load, use the tunnel + `127.0.0.1` hosts entry as above, or reach it with a Host header through the tunnel.
+
 ---
-### Issue: ExitCode 14 / Restarting loop
 
-**Cause:** MongoDB cannot write to the mounted data folder (`/data/db`).
+If Ingress still fails: `minikube addons disable ingress; minikube addons enable ingress; kubectl delete -f kubernetes-deployments/; kubectl apply -f kubernetes-deployments/`
 
-### Solution
+### Issue: Mongo ExitCode 14 / restart loop
 
-### If using bind mount (host folder) — platform-specific instructions:
+MongoDB cannot write to `./mongo-data`.
+- Ensure folder exists (`mkdir mongo-data`).
+- Permissions: Linux `sudo chown -R 999:999 ./mongo-data`; Windows/macOS: add folder to Docker Desktop → Settings → Resources → File Sharing.
 
-#### Windows
+### Alternative: Named volume (avoid permission issues)
 
-1. Ensure the folder exists:
-    ```powershell
-    mkdir C:\Users\<your-user>\public-notes-platform\mongo-data
-    ```
-
-2. Share the folder with Docker:
-    - Open **Docker Desktop** → **Settings** → **Resources** → **File Sharing**
-    - Add:
-      ```
-      C:\Users\<your-user>\public-notes-platform\mongo-data
-      ```
-    - Click **Apply & Restart**
-
-
-
-#### macOS or Linux
-
-1. Ensure the folder exists:
-    ```bash
-    sudo mkdir -p ~/public-notes-platform/mongo-data
-    ```
-
-2. Set proper permissions (MongoDB must have write access):
-    ```bash
-    sudo chown -R 999:999 ~/public-notes-platform/mongo-data
-
-    ```
-
-
-
-### Alternative Fix: Use Docker **named volume**
-
-Instead of bind mount, configure a named volume. In `docker-compose.yml`, replace:
-
-```yaml
-volumes:
-  - ./mongo-data:/data/db
-```
-
-**With**
-
+Replace bind mount in `docker-compose.yml`:
 ```yaml
 volumes:
   - mongo-data:/data/db
-
 volumes:
   mongo-data:
 ```
 
-## Issue: HAProxy Cannot Resolve Backend DNS on Linux (EC2)
+### HAProxy DNS on Linux (EC2)
 
-### Backend Resolution Fails on Linux (e.g., EC2)
-
-When running on **Docker Desktop** (Windows/macOS), HAProxy can resolve backend service names (e.g., `app1`, `app2`) via Docker internal DNS on default port `80`.
-
-However, on **Linux environments** (such as EC2), this resolution may fail. The HAProxy log will show errors like:
-
-**[ALERT]** : 'server flask_backends/app1' : could not resolve address 'app1'.
-
-### Solution:
-
-Please kindly change from:
-
-```yaml
-backend flask_backends
-    balance roundrobin
-    server app1 app1:80 check
-    server app2 app2:80 check
-```
-
-to:
-
+If HAProxy can't resolve backends, use app port `5000` in `haproxy.cfg`:
 ```yaml
 backend flask_backends
     balance roundrobin
     server app1 app1:5000 check
     server app2 app2:5000 check
 ```
+`app.run(host="0.0.0.0", port=5000)` is already set. Rebuild: `docker compose up -d --build haproxy`.
 
-Update in the file run.py:
-
-```yaml
-app.run(host="0.0.0.0", port=5000)
-```
-
-Rebuild Haproxy:
-
-```yaml
-docker compose up -d --build haproxy
-```
-
-Verify Runnning Container 
-
-```yaml
-docker ps
-```
-
-### Full Cleanup & Rebuild (When Things Go Wrong)
-
-If HAProxy or any other service still fails after applying the basic troubleshooting steps, it's best to **clean up the environment completely** and perform a **full rebuild without using Docker cache**.
-
----
-
-### Common Symptoms
-- HAProxy still fails to resolve DNS
-- Containers are not reachable or crash at startup
-- Persistent volumes cause permission issues (especially on EC2/Linux)
-- MongoDB container fails to start due to inaccessible data directory
-
----
-
-### Solution: Full Reset & Clean Build
-
-#### Stop All Containers, Remove Orphaned Volumes And Build Again Without Cache
+### Full reset (if stuck)
 
 ```bash
-# 1. Stop all containers and prune everything
 docker compose down -v --remove-orphans
 docker system prune -f --volumes
-
-# 2. Fix local volume permission issues (Linux/EC2)
-sudo rm -rf ~/public-notes-platform/mongo-data
-mkdir -p ~/public-notes-platform/mongo-data
-sudo chown -R ec2-user:ec2-user ~/public-notes-platform/mongo-data
-
-# 3. Rebuild images without cache
 docker compose build --no-cache
-
-# 4. Start containers
 docker compose up -d
 ```
 
@@ -373,18 +149,11 @@ docker compose up -d
 ---
 
 
-## Clean Up
-
-To stop and delete all resources:
+## Cleanup
 
 ```bash
-kubectl delete -f kubernetes-deployments/
-```
-
-To tear down Docker Compose:
-
-```bash
-docker compose down
+kubectl delete -f kubernetes-deployments/  # K8s
+docker compose down                        # Docker Compose
 ```
 
 ---
